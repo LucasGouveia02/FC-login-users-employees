@@ -10,3 +10,4 @@ spring:
         dialect: ${DB_DIALECT}
 server:
   port: ${PORT:8082}
+  address: 0.0.0.0

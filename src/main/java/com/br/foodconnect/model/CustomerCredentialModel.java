@@ -20,4 +20,5 @@ public class CustomerCredentialModel {
     private String email;
     private String password;
     private Boolean isEnabled;
+
 }
