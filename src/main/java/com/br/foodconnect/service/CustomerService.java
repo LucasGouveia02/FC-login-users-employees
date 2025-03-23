@@ -3,6 +3,7 @@ package com.br.foodconnect.service;
 import com.br.foodconnect.dto.LoginDTO;
 import com.br.foodconnect.repository.CustomerCredentialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ public class CustomerService {
     @Autowired
     private CustomerCredentialRepository customerCredentialRepository;
 
-    private BCryptPasswordEncoder encryptPassword;
+    private final BCryptPasswordEncoder encryptPassword = new BCryptPasswordEncoder();
 
     public ResponseEntity<?> loginCustomer(LoginDTO loginDTO) {
         var credentials = customerCredentialRepository.findByEmail(loginDTO.email());
