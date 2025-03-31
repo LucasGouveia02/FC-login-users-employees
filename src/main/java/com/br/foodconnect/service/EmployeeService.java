@@ -29,7 +29,7 @@ public class EmployeeService {
             boolean senhaCorreta = passwordEmployeeService.verificarSenha(credencialDTO.getPassword(), credencial.getPassword());
             if (senhaCorreta) {
                 EmployeeModel employee = employeeRepository.buscarPorId(credencial.getId());
-                return new ResponseEntity<>(new AuthenticationEmployeeDTO(credencial.getIsEnabled(), true, employee.getId(), employee.getName(), credencial.getRole(), employee.getStore().getName()), HttpStatus.OK);
+                return new ResponseEntity<>(new AuthenticationEmployeeDTO(credencial.getEnabled(), true, employee.getId(), employee.getName(), credencial.getRole(), employee.getStore().getName()), HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
