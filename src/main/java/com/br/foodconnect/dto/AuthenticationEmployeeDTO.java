@@ -10,17 +10,21 @@ public class AuthenticationEmployeeDTO {
     private String name;
     private String role;
     private String storeName;
+    private Long storeId;
+    private String foodCourt;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private boolean isEnabled;
 
-    public AuthenticationEmployeeDTO(boolean isEnabled, boolean authenticated, Long id, String name, String role, String storeName) {
+    public AuthenticationEmployeeDTO(boolean isEnabled, boolean authenticated, Long id, String name, String role, String storeName, Long storeId, String foodCourt) {
         this.isEnabled = isEnabled;
         this.authenticated = authenticated;
         this.id = id;
         this.name = name;
         this.role = role;
         this.storeName = storeName;
+        this.storeId = storeId;
+        this.foodCourt = foodCourt;
     }
 
     public boolean isAuthenticated() {
@@ -69,5 +73,21 @@ public class AuthenticationEmployeeDTO {
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
+    }
+
+    public Long getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(Long storeId) {
+        this.storeId = storeId;
+    }
+
+    public String getFoodCourt() {
+        return foodCourt;
+    }
+
+    public void setFoodCourt(String foodCourt) {
+        foodCourt = foodCourt;
     }
 }
