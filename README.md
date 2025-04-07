@@ -11,7 +11,7 @@ This is a microservice for login on FoodConnect app and BackOffice system.
 - [Request Examples](#-request-examples)
 - [Security](#-security)
 - [Project Structure](#-project-structure)
-- [Author](#-author)
+- [Authors](#-authors)
 
 ---
 
@@ -57,15 +57,16 @@ cd FC-login-users-employees
 
 ## 🔐 Available Endpoints
 
-| Method | Endpoint       | Description                          | Authentication |
-|--------|----------------|--------------------------------------|----------------|
-| POST   | /CustomerLogin    | Validates credentials to grant access to FoodConnect services | ❌             |
+| Method | Endpoint              | Description                                                                       |
+|-------|-----------------------|-----------------------------------------------------------------------------------|
+| POST  | /CustomerLogin        | Validates credentials to grant access to FoodConnect services                     |
+| POST  | /login/employeeAccess | Validates credentials for employees to grant access to BackOffice of FoodConnect  |
 
 ---
 
 ## 📦 Request Examples
 
-### Login
+### Customer Login
 
 ```http
 POST /CustomerLogin
@@ -81,6 +82,24 @@ Content-Type: application/json
 
 ```http
 HTTP/1.1 200 OK
+```
+
+### Employee Login
+
+```http
+POST /login/employeeAccess
+Content-Type: application/json
+
+{
+    "email": "userbackoffice@example.com",
+    "password": "MyPassword10"
+}
+```
+
+#### Response
+
+```http
+
 ```
 
 ---
@@ -111,4 +130,6 @@ src
 
 ## 👤 Authors
 
-Made for Gabriel Santos Attuy
+**Gabriel Santos Attuy**  
+🐙 GitHub: [@Gabs-Attuy](https://github.com/Gabs-Attuy)  
+💼 LinkedIn: [Gabriel Attuy](https://www.linkedin.com/in/gabriel-attuy-197010265)
