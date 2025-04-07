@@ -14,14 +14,14 @@ public class StoreModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String cpnj;
+    private String cnpj;
     private Boolean isEnabled;
     private String FoodCourt;
 
-    public StoreModel(Long id, String name, String cpnj, Boolean isEnabled, String foodCourt) {
+    public StoreModel(Long id, String name, String cnpj, Boolean isEnabled, String foodCourt) {
         this.id = id;
         this.name = name;
-        this.cpnj = cpnj;
+        this.cnpj = cnpj;
         this.isEnabled = isEnabled;
         FoodCourt = foodCourt;
     }
@@ -45,12 +45,12 @@ public class StoreModel {
         this.name = name;
     }
 
-    public String getCpnj() {
-        return cpnj;
+    public String getCnpj() {
+        return cnpj;
     }
 
     public void setCpnj(String cpnj) {
-        this.cpnj = cpnj;
+        this.cnpj = cpnj;
     }
 
     public Boolean getEnabled() {
