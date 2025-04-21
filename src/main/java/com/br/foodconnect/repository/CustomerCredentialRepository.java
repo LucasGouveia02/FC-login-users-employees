@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface CustomerCredentialRepository extends JpaRepository<CustomerCredentialModel, Long> {
 
-    @Query("SELECT new com.br.foodconnect.dto.CustomerCredentialsAndInfoDTO(cr.email, cr.password, c.phoneNumber, c.name)" +
+    @Query("SELECT new com.br.foodconnect.dto.CustomerCredentialsAndInfoDTO(cr.id, cr.email, cr.password, c.phoneNumber, c.name)" +
             " FROM CustomerModel c INNER JOIN c.credential cr WHERE cr.email = :email")
     CustomerCredentialsAndInfoDTO findByEmail(@Param("email") String email);
 
