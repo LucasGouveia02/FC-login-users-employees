@@ -33,6 +33,7 @@ public class CustomerService {
 
         if(encryptPassword.matches(customerCredentialsDTO.password(), customerCredentialsAndInfoDTO.password())){
             CustomerInfoDTO customerInfoDTO = new CustomerInfoDTO(
+                    customerCredentialsAndInfoDTO.id(),
                     customerCredentialsAndInfoDTO.email(),
                     customerCredentialsAndInfoDTO.cellphoneNumber(),
                     customerCredentialsAndInfoDTO.name()
