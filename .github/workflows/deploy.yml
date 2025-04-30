@@ -57,8 +57,12 @@ jobs:
             }
 
             echo "Novo container está funcionando. Substituindo container antigo..."
+
+            # Parar e remover o container antigo, se existir
             docker stop $SERVICE_NAME || true
             docker rm -f $SERVICE_NAME || true
+
+            # Renomeia o novo container para o nome do container original
             docker rename $NEW_CONTAINER $SERVICE_NAME
 
             echo "Deploy finalizado com sucesso!"
