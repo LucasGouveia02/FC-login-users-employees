@@ -26,6 +26,10 @@ jobs:
             PROJECT_DIR="/home/FoodConnect/foodconnect-backend"
             LOG_DIR="$HOME/logs"
 
+            # Caminho para as credenciais
+            CREDENTIALS_PATH="/home/FoodConnect/credentials"
+
+            # Navega para o diretório do serviço
             cd $PROJECT_DIR/$SERVICE_NAME
 
             echo "Atualizando código fonte..."
@@ -35,7 +39,9 @@ jobs:
             docker build -t $NEW_CONTAINER .
 
             echo "Subindo novo container isolado para testes..."
-            docker run -d --name $NEW_CONTAINER -p 8089:8080 $NEW_CONTAINER
+            docker run -d --name $NEW_CONTAINER -p 8089:8080 \
+              -v $CREDENTIALS_PATH:/credentials:ro \
+              $NEW_CONTAINER
 
             echo "Aguardando container iniciar..."
             sleep 10
