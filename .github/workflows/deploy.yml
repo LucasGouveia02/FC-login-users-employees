@@ -25,6 +25,7 @@ jobs:
             NEW_CONTAINER="${SERVICE_NAME}_new"
             PROJECT_DIR="/home/FoodConnect/foodconnect-backend"
             LOG_DIR="$HOME/logs"
+            CREDENTIALS_PATH="/home/FoodConnect/credentials"
 
             cd $PROJECT_DIR/$SERVICE_NAME
 
@@ -42,7 +43,9 @@ jobs:
             fi
 
             echo "Subindo novo container isolado para testes..."
-            docker run -d --name $NEW_CONTAINER -p 8089:8080 $NEW_CONTAINER
+            docker run -d --name $NEW_CONTAINER -p 8089:8080 \
+              -v $CREDENTIALS_PATH:/credentials:ro \
+              $NEW_CONTAINER
 
             echo "Aguardando container iniciar..."
             sleep 10
