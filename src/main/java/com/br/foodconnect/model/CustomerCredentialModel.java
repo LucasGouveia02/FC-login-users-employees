@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "customer-credential")
+@Table(name = "customer_credential")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -20,4 +20,5 @@ public class CustomerCredentialModel {
     private String email;
     private String password;
     private Boolean isEnabled;
+
 }

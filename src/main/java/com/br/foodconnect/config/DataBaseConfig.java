@@ -16,8 +16,8 @@ public class DataBaseConfig {
     @Bean
     public DataSource dataSource() throws Exception {
         Dotenv dotenv = Dotenv.configure()
-                .directory("env/local")
-                .filename("env")
+                .directory("env/cloud")
+                .filename("env.conf")
                 .load();
 
         String usernamePath = dotenv.get("DB_USERNAME_PATH");
