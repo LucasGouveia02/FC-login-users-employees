@@ -19,26 +19,41 @@ jobs:
 
       - name: Deploy via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no FoodConnect@4.201.144.173 "
+          ssh -o StrictHostKeyChecking=no FoodConnect@4.201.144.173 '
             set -e
-            cd /home/FoodConnect/foodconnect-backend/login-users-employees &&
+            SERVICE_NAME="login-users-employees"
+            NEW_CONTAINER="${SERVICE_NAME}_new"
+            PROJECT_DIR="/home/FoodConnect/foodconnect-backend"
+            LOG_DIR="$HOME/logs"
 
-            # Atualizar o repositório do login-users-employeesr
-            git pull origin main &&
+            cd $PROJECT_DIR/$SERVICE_NAME
 
-            # Voltar para a raiz do projeto Docker
-            cd .. &&
+            echo "Atualizando código fonte..."
+            git pull origin main
 
-            # Parar e remover containers existentes
-            docker-compose down || true
+            echo "Construindo nova imagem..."
+            docker build -t $NEW_CONTAINER .
 
-            # Remover imagens órfãs ou corrompidas (se houver)
-            docker image prune -af || true
+            echo "Subindo novo container isolado para testes..."
+            docker run -d --name $NEW_CONTAINER -p 8089:8080 $NEW_CONTAINER
 
-            # Remover volumes não utilizados (evita conflitos com mounts antigos)
-            docker volume prune -f || true
+            echo "Aguardando container iniciar..."
+            sleep 10
 
-            # Rebuild completo e subir tudo novamente
-            docker-compose build --no-cache
-            docker-compose up -d
-          "
+            echo "Verificando se o novo container subiu com sucesso..."
+            docker logs $NEW_CONTAINER | grep -q "Started" || {
+              echo "Erro detectado! Salvando logs..."
+              mkdir -p $LOG_DIR
+              docker logs $NEW_CONTAINER > $LOG_DIR/${NEW_CONTAINER}-$(date +%Y%m%d-%H%M%S).log
+              docker rm -f $NEW_CONTAINER
+              echo "Mantendo a versão anterior em execução."
+              exit 1
+            }
+
+            echo "Novo container está funcionando. Substituindo container antigo..."
+            docker stop $SERVICE_NAME || true
+            docker rm -f $SERVICE_NAME || true
+            docker rename $NEW_CONTAINER $SERVICE_NAME
+
+            echo "Deploy finalizado com sucesso!"
+          '
