@@ -20,13 +20,12 @@ jobs:
       - name: Deploy via SSH
         run: |
           ssh -o StrictHostKeyChecking=no FoodConnect@4.201.144.173 "
-            set -e
+            set -e &&
             cd /home/FoodConnect/foodconnect-backend/login-users-employees &&
-
             git pull origin main &&
-            
-            # Rodar o Docker Compose (ele pode reconstruir e atualizar as outras APIs também)
             cd .. &&
-            docker-compose down || true &&
-            docker-compose up -d --build
+            docker stop foodconnect_login-users-employees_1 || true &&
+            docker rm -f foodconnect_login-users-employees_1 || true &&
+            docker rmi -f foodconnect_login-users-employees || true &&
+            docker compose up -d --build login-users-employees
           "
