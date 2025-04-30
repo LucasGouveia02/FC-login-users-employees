@@ -20,12 +20,25 @@ jobs:
       - name: Deploy via SSH
         run: |
           ssh -o StrictHostKeyChecking=no FoodConnect@4.201.144.173 "
-            set -e &&
+            set -e
             cd /home/FoodConnect/foodconnect-backend/login-users-employees &&
+
+            # Atualizar o repositório do login-users-employeesr
             git pull origin main &&
+
+            # Voltar para a raiz do projeto Docker
             cd .. &&
-            docker stop foodconnect_login-users-employees_1 || true &&
-            docker rm -f foodconnect_login-users-employees_1 || true &&
-            docker rmi -f foodconnect_login-users-employees || true &&
-            docker compose up -d --build login-users-employees
+
+            # Parar e remover containers existentes
+            docker-compose down || true
+
+            # Remover imagens órfãs ou corrompidas (se houver)
+            docker image prune -af || true
+
+            # Remover volumes não utilizados (evita conflitos com mounts antigos)
+            docker volume prune -f || true
+
+            # Rebuild completo e subir tudo novamente
+            docker-compose build --no-cache
+            docker-compose up -d
           "
