@@ -36,10 +36,11 @@ jobs:
             docker build -t $NEW_CONTAINER .
 
             echo "Verificando se o container auxiliar está rodando na porta 8089..."
-            if docker ps -q -f "expose=8089"; then
+            CONTAINER_ID=$(docker ps -q -f "publish=8089")
+            if [ ! -z "$CONTAINER_ID" ]; then
               echo "Container auxiliar encontrado, parando..."
-              docker stop $(docker ps -q -f "expose=8089")
-              docker rm -f $(docker ps -q -f "expose=8089")
+              docker stop $CONTAINER_ID
+              docker rm -f $CONTAINER_ID
             fi
 
             echo "Subindo novo container isolado para testes..."
