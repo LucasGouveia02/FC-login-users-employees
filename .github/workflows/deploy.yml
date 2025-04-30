@@ -21,9 +21,9 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no FoodConnect@4.201.144.173 '
             set -e
-            SERVICE_NAME="login-users-employees"
-            NEW_CONTAINER="${SERVICE_NAME}_new"
             PROJECT_DIR="/home/FoodConnect/foodconnect-backend"
+            SERVICE_NAME="login-users-employees"
+            TEST_IMAGE="${SERVICE_NAME}_test"
             LOG_DIR="$HOME/logs"
             CREDENTIALS_PATH="/home/FoodConnect/credentials"
 
@@ -32,48 +32,47 @@ jobs:
             echo "Atualizando código fonte..."
             git pull origin main
 
-            echo "Construindo nova imagem..."
-            docker build -t $NEW_CONTAINER .
+            echo "Construindo imagem de teste..."
+            docker build -t $TEST_IMAGE .
 
-            echo "Verificando se o container auxiliar está rodando na porta 8089..."
-            CONTAINER_ID=$(docker ps -q -f "publish=8089")
-            if [ ! -z "$CONTAINER_ID" ]; then
-              echo "Container auxiliar encontrado, parando..."
-              docker stop $CONTAINER_ID
-              docker rm -f $CONTAINER_ID
+            echo "Verificando container de teste rodando em 8089..."
+            TEST_CONTAINER_ID=$(docker ps -q -f publish=8089)
+            if [ ! -z "$TEST_CONTAINER_ID" ]; then
+              docker stop $TEST_CONTAINER_ID
+              docker rm -f $TEST_CONTAINER_ID
             fi
 
-            echo "Verificando se o container com o nome $NEW_CONTAINER já existe..."
-            EXISTING_CONTAINER=$(docker ps -a -q -f "name=$NEW_CONTAINER")
-            if [ ! -z "$EXISTING_CONTAINER" ]; then
-              echo "Container com o nome $NEW_CONTAINER encontrado, removendo..."
-              docker rm -f $EXISTING_CONTAINER
-            fi
-
-            echo "Subindo novo container isolado para testes..."
-            docker run -d --name $NEW_CONTAINER -p 8089:8080 \
+            echo "Subindo container de teste com a nova imagem..."
+            docker run -d --name ${SERVICE_NAME}_test -p 8089:8080 \
               -v $CREDENTIALS_PATH:/credentials:ro \
-              $NEW_CONTAINER
+              $TEST_IMAGE
 
             echo "Aguardando container iniciar..."
             sleep 10
 
-            echo "Verificando se o novo container subiu com sucesso..."
-            docker logs $NEW_CONTAINER | grep -q "Started" || {
+            echo "Verificando se container de teste subiu corretamente..."
+            docker logs ${SERVICE_NAME}_test | grep -q "Started" || {
               echo "Erro detectado! Salvando logs..."
               mkdir -p $LOG_DIR
-              docker logs $NEW_CONTAINER > $LOG_DIR/${NEW_CONTAINER}-$(date +%Y%m%d-%H%M%S).log
-              docker rm -f $NEW_CONTAINER
-              echo "Mantendo a versão anterior em execução."
+              docker logs ${SERVICE_NAME}_test > $LOG_DIR/${SERVICE_NAME}_test-$(date +%Y%m%d-%H%M%S).log
+              docker rm -f ${SERVICE_NAME}_test
+              echo "Abortando deploy."
               exit 1
             }
 
-            echo "Novo container está funcionando. Substituindo container antigo..."
-            # Parar e remover o container antigo, se existir
-            docker stop $SERVICE_NAME || true
-            docker rm -f $SERVICE_NAME || true
-            # Renomeia o novo container para o nome do container original
-            docker rename $NEW_CONTAINER $SERVICE_NAME
+            echo "Parando e removendo container antigo do docker-compose..."
+            cd $PROJECT_DIR
+            docker compose stop $SERVICE_NAME || true
+            docker compose rm -f $SERVICE_NAME || true
+
+            echo "Atualizando imagem no docker-compose e subindo..."
+            docker tag $TEST_IMAGE $SERVICE_NAME
+            docker rmi $TEST_IMAGE || true
+
+            docker compose up -d --no-deps --build $SERVICE_NAME
+
+            echo "Removendo container de teste..."
+            docker rm -f ${SERVICE_NAME}_test || true
 
             echo "Deploy finalizado com sucesso!"
           '
