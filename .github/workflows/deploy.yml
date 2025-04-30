@@ -43,6 +43,13 @@ jobs:
               docker rm -f $CONTAINER_ID
             fi
 
+            echo "Verificando se o container com o nome $NEW_CONTAINER já existe..."
+            EXISTING_CONTAINER=$(docker ps -a -q -f "name=$NEW_CONTAINER")
+            if [ ! -z "$EXISTING_CONTAINER" ]; then
+              echo "Container com o nome $NEW_CONTAINER encontrado, removendo..."
+              docker rm -f $EXISTING_CONTAINER
+            fi
+
             echo "Subindo novo container isolado para testes..."
             docker run -d --name $NEW_CONTAINER -p 8089:8080 \
               -v $CREDENTIALS_PATH:/credentials:ro \
