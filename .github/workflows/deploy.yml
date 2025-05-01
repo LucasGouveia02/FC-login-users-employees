@@ -32,6 +32,9 @@ jobs:
             echo "Atualizando código fonte..."
             git pull origin main
 
+            echo "Atualizando jar da VM..."
+            ./mvnw clean package -DskipTests
+
             echo "Construindo imagem de teste..."
             docker build -t $TEST_IMAGE .
 
