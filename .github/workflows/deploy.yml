@@ -70,12 +70,19 @@ jobs:
 
             echo "Atualizando imagem no docker-compose e subindo..."
             docker tag $TEST_IMAGE $SERVICE_NAME
+            docker image prune -f
             docker rmi $TEST_IMAGE || true
 
             docker compose up -d --no-deps --build $SERVICE_NAME
 
             echo "Removendo container de teste..."
             docker rm -f ${SERVICE_NAME}_test || true
+
+            echo "Limpando recursos não utilizados..."
+            docker image prune -af --filter "until=24h" || true
+            docker container prune -f || true
+            docker volume prune -f || true
+            docker network prune -f || true
 
             echo "Deploy finalizado com sucesso!"
           '
