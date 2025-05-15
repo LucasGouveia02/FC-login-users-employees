@@ -25,8 +25,8 @@ public class CustomerService {
 
         if(customerCredentialsAndInfoDTO == null){
             return ResponseEntity.status(404).body(new LoginResponseDTO(
-                    "Credentials not register in system.",
-                    "error",
+                    "E-mail não cadastrado no sistema.",
+                    "Erro",
                     null
             ));
         }
@@ -38,14 +38,14 @@ public class CustomerService {
                     customerCredentialsAndInfoDTO.name()
             );
             return ResponseEntity.status(200).body(new LoginResponseDTO(
-                    "Access Granted.",
-                    "success",
+                    "Login realizado com sucesso.",
+                    "Sucesso",
                     customerInfoDTO
             ));
         } else {
             return ResponseEntity.status(401).body(new LoginResponseDTO(
-                    "E-mail or password invalid.",
-                    "error",
+                    "Senha inválida.",
+                    "Erro",
                     null
             ));
         }
